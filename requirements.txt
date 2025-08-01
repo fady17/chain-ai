@@ -1,0 +1,14 @@
+# Core libraries
+openai
+google-generativeai
+jinja2
+
+# Local embeddings & vector search
+sentence-transformers
+faiss-cpu
+numpy
+pydantic_settings
+python-dotenv
+
+tenacity
+qdrant-client
