@@ -16,3 +16,4 @@ azure-ai-inference
 azure-core
 azure-search-documents
 tiktoken
+# pytest

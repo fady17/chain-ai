@@ -1,164 +1,146 @@
 """
-The definitive, end-to-end RAG pipeline for the Mini-Chain project,
-showcasing its own history with detailed, step-by-step logging.
+The simplest possible Retrieval-Augmented Generation (RAG) pipeline
+built with the Mini-Chain framework.
+
+This script demonstrates the five core steps of RAG in a minimal,
+easy-to-understand way:
+1.  Load & Split: A source text is loaded and split into chunks.
+2.  Embed & Store: The chunks are converted to vectors and stored in memory.
+3.  Retrieve: A user question is used to find the most relevant chunks.
+4.  Augment: The question and retrieved context are combined into a prompt.
+5.  Generate: An LLM answers the question based on the prompt.
+
+This entire process runs locally, using models served from LM Studio and
+an in-memory FAISS vector store.
 """
-import os
 import sys
-import numpy as np
-from dotenv import load_dotenv
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
-# Add the src directory to the Python path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), './src')))
+import socket
 
-# Import all the components from our framework
-from minichain.core.types import Document
-from minichain.text_splitters.implementations import RecursiveCharacterTextSplitter
-from minichain.embeddings.azure import AzureOpenAIEmbeddings
-from minichain.vector_stores.faiss import FAISSVectorStore
-from minichain.chat_models.azure import AzureOpenAIChatModel
-from minichain.prompts.implementations import PromptTemplate
 
-# --- Enhanced Helper Functions ---
-def print_header(title):
+# Import the essential components from our framework
+from minichain.text_splitters import TokenTextSplitter
+from minichain.embeddings import LocalEmbeddings
+from minichain.memory import FAISSVectorStore
+from minichain.chat_models import LocalChatModel
+from minichain.prompts import PromptTemplate
+
+def print_header(title: str):
+    """Prints a formatted header for clear sections."""
     print("\n" + "=" * 70)
     print(f" {title.upper()} ".center(70, " "))
     print("=" * 70)
 
-def print_vector_preview(vector: list, prefix=""):
-    """Prints a preview of a vector (first 3 and last 3 elements)."""
-    if not vector:
-        print(f"{prefix}Vector Preview: [Empty Vector]")
-        return
-    preview = f"[{', '.join(map(str, np.round(vector[:3], 4)))}, ..., {', '.join(map(str, np.round(vector[-3:], 4)))}]"
-    print(f"{prefix}Vector Preview: {preview} | Dimensions: {len(vector)}")
+def check_server(port: int) -> bool:
+    """Verifies that the local model server is running."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(2)
+        return s.connect_ex(('localhost', port)) == 0
 
 def main():
-    """Main function to run the RAG pipeline."""
-    
+    """Executes the simple RAG pipeline."""
+
+    # --- Pre-flight Check ---
+    print_header("Step 0: Pre-flight Check")
+    if not check_server(1234):
+        print("❌ ERROR: Local server not detected on port 1234.")
+        print("Please start the server in LM Studio and load a chat model and an embedding model.")
+        return
+    print("✅ Local server detected. The pipeline is a go.")
+
+    # --- Step 1: Initialize Core Components ---
     print_header("Step 1: Initializing Mini-Chain Components")
-    load_dotenv()
-    print("✅ Environment variables loaded.")
-
-    # Initialize components
-    chat_model = AzureOpenAIChatModel(
-        deployment_name=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME") # type: ignore
-    )
-    embeddings = AzureOpenAIEmbeddings(
-        deployment_name=os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME") # type: ignore
-    )
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=250, chunk_overlap=30)
+    
+    # All components are the simplest, local-first options.
+    embeddings = LocalEmbeddings()
+    text_splitter = TokenTextSplitter(chunk_size=150, chunk_overlap=15)
     vector_store = FAISSVectorStore(embeddings=embeddings)
-    print("✅ All components initialized successfully.")
-
-    # --- STEP 2: DEFINE & PROCESS SOURCE DOCUMENT ---
-    print_header("Step 2: The 'Mini-Chain' Origin Story")
+    chat_model = LocalChatModel()
     
-    # The real, authentic source text.
+    print("✅ Components Initialized (Embeddings, Splitter, Vector Store, Chat Model)")
+
+    # --- Step 2: Load, Split, and Index the Data ---
+    print_header("Step 2: Loading and Indexing Knowledge")
+
+    # A simple, fictional knowledge base. The model will not know this information.
     source_text = """
-    The 'Mini-Chain' project is a lightweight, LangChain-inspired framework developed
-    in-house. The primary development was led by Fady, a dedicated intern, who built
-    the core package from the ground up. The project's development was guided by insights
-    and examples from large language models like Claude and Gemini.
-
-    The architecture and code quality are under review by two senior figures.
-    The first is Amin, a legendary AI engineer who was building advanced computer vision
-    models back in 2017, long before the current LLM boom. His expertise ensures the
-    system is robust and well-engineered.
-
-    The second reviewer is Yehya, a respected open-source contributor and an Arch Linux user,
-    known for his rigorous approach to software architecture and maintainability. His perspective
-    is crucial for ensuring the framework is both powerful and easy to extend.
+    The Chrono-Camera is a fictional device invented by Dr. Aris Thorne in 2042.
+    It does not take pictures of the present, but rather captures faint temporal
+    echoes from the past. The camera requires a rare crystal, "Aethelred," to
+    focus these echoes. Its primary limitation is that it cannot capture images
+    from before the year 1600 due to quantum instability. For support, contact
+    support@thornetechnologies.ai.
     """
-    print(f"Source Text:\n---\n{source_text.strip()}\n---")
     
-    documents = text_splitter.create_documents([source_text], [{"source": "project_readme.md"}])
+    print("Splitting the source text into manageable chunks...")
+    documents = text_splitter.create_documents(texts=[source_text])
     
-    print(f"\n📄 Document split into {len(documents)} chunks:")
-    for i, doc in enumerate(documents):
-        print(f"  Chunk {i+1}: '{doc.page_content}'")
-
-    # --- STEP 3: INDEX DOCUMENTS IN THE VECTOR STORE ---
-    print_header("Step 3: Indexing the Story (Embedding in Detail)")
-    
-    texts_to_embed = [doc.page_content for doc in documents]
-    print(f"Embedding {len(texts_to_embed)} text chunks...")
-    
-    embedded_vectors = embeddings.embed_documents(texts_to_embed)
-    
-    for i, vec in enumerate(embedded_vectors):
-        print(f"\n--- Embedding for Chunk {i+1} ---")
-        print(f"Text: '{texts_to_embed[i]}'")
-        print_vector_preview(vec)
-    
+    print(f"Indexing {len(documents)} chunks into the FAISS vector store...")
     vector_store.add_documents(documents)
     
-    # --- STEP 4: ASK A QUESTION & RETRIEVE CONTEXT ---
-    print_header("Step 4: Retrieval (Asking About the Team)")
-    
-    question = "Who is reviewing the code for the Mini-Chain project?"
-    print(f"❓ User Question: '{question}'")
-    
-    print("\n--- Embedding the User Query ---")
-    query_vector = embeddings.embed_query(question)
-    print_vector_preview(query_vector)
-    
-    print("\n--- Performing Similarity Search ---")
-    retrieved_docs = vector_store.similarity_search(question, k=2)
-    
-    print(f"\n🔍 Retrieved {len(retrieved_docs)} most relevant document chunks:")
-    for i, doc in enumerate(retrieved_docs):
-        print(f"  Result {i+1}: '{doc.page_content}'")
-        
-    # --- STEP 5: AUGMENT THE PROMPT ---
-    print_header("Step 5: Augmentation")
+    print("✅ Knowledge base is loaded and ready.")
 
-    context_string = "\n---\n".join([doc.page_content for doc in retrieved_docs])
-    rag_prompt_template = PromptTemplate(
+    # --- Step 3: Define the RAG Prompt ---
+    print_header("Step 3: Defining the RAG Prompt")
+
+    # This prompt template is the core of our RAG logic.
+    rag_template = PromptTemplate(
         template="""
-You are an AI assistant with perfect knowledge of the 'Mini-Chain' project's history.
-Answer the user's question based ONLY on the context provided below.
-Be clear and concise.
+You are a helpful assistant. Answer the user's question based ONLY on the
+following context. If the context does not contain the answer, say that you
+do not have enough information.
 
 CONTEXT:
-{context}
+{{ context }}
 
 QUESTION:
-{question}
+{{ question }}
 
 ANSWER:
 """
     )
-    final_prompt = rag_prompt_template.format(context=context_string, question=question)
-    
-    print("✨ Final prompt being sent to the LLM:")
-    print("---")
-    print(final_prompt.strip())
-    print("---")
+    print("✅ RAG prompt template created.")
 
-    # --- STEP 6: GENERATE THE FINAL ANSWER ---
-    print_header("Step 6: Generation")
+    # --- Step 4: The Interactive Q&A Loop ---
+    print_header("Step 4: Interactive Q&A")
+    print("The RAG system is ready. Ask a question about the Chrono-Camera.")
+    print("Type 'exit' or 'quit' to end the session.")
     
-    final_answer = chat_model.invoke(final_prompt)
-    
-    print("\n" + "*"*70)
-    print(" FINAL ANSWER ".center(70, " "))
-    print("*"*70)
-    print(f"Question: {question}")
-    print(f"Answer: {final_answer}")
-    print("*"*70)
-    
-    # --- Let's ask another, more specific question! ---
-    print_header("Bonus Round: Another Question")
-    question_2 = "What is Amin known for?"
-    print(f"❓ User Question: '{question_2}'")
-    retrieved_docs_2 = vector_store.similarity_search(question_2, k=1)
-    context_string_2 = "\n---\n".join([doc.page_content for doc in retrieved_docs_2])
-    final_prompt_2 = rag_prompt_template.format(context=context_string_2, question=question_2)
-    final_answer_2 = chat_model.invoke(final_prompt_2)
-    print("\n" + "*"*70)
-    print(f"Question: {question_2}")
-    print(f"Answer: {final_answer_2}")
-    print("*"*70)
+    while True:
+        try:
+            user_question = input("\nYour Question: ")
+            if user_question.lower() in ["exit", "quit"]:
+                print("Exiting RAG session. Goodbye!")
+                break
+            
+            # 1. RETRIEVE
+            print("-> Retrieving relevant documents from the vector store...")
+            retrieved_results = vector_store.similarity_search(query=user_question, k=2)
+            # We extract just the Document objects from the (Document, score) tuples
+            retrieved_docs = [doc for doc, score in retrieved_results]
+            
+            # 2. AUGMENT
+            context_string = "\n\n".join([doc.page_content for doc in retrieved_docs])
+            
+            # 3. GENERATE
+            print("-> Generating an answer with the LLM...")
+            final_prompt = rag_template.format(context=context_string, question=user_question)
+            
+            answer = chat_model.invoke(final_prompt)
+            
+            print("\n" + "-"*70)
+            print("AI Answer:")
+            print(answer.strip())
+            print("-"*70)
+
+        except KeyboardInterrupt:
+            print("\nExiting RAG session. Goodbye!")
+            break
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            break
 
 if __name__ == "__main__":
     main()

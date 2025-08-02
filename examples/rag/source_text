@@ -1,0 +1,18 @@
+# new_source_text
+MINI_CHAIN_PHILOSOPHY = """
+Mini-Chain is a micro-framework for building applications with Large Language Models.
+It was born from a simple yet powerful idea: what if developers could use the core
+components of a modern AI stack without the heavy abstractions?
+
+Our core principle is **transparency**. We provide clean, single-purpose classes for
+each stage of the RAG (Retrieval-Augmented Generation) pipeline: Loaders, Splitters,
+Embedders, Memory, and Models. This modular, "glass-box" design allows developers to
+understand, debug, and swap out any component with ease. For example, a user can
+seamlessly switch from a local FAISS vector store for prototyping to a scalable
+Azure AI Search instance for production with a single line of code change.
+
+This project is built for engineers who value control and clarity. It's for those
+who want to understand the mechanics, not just call a high-level API. The architecture
+is intentionally minimal, promoting a deep understanding of how each component
+contributes to the final result.
+"""
