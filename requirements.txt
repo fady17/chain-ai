@@ -12,3 +12,5 @@ python-dotenv
 
 tenacity
 qdrant-client
+azure-ai-inference
+azure-core
