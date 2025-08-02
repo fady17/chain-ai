@@ -1,24 +1,18 @@
+# run_minichain_assistant.py
 """
-The simplest possible Retrieval-Augmented Generation (RAG) pipeline
-built with the Mini-Chain framework.
+A simple and interactive Question-Answering bot for the Mini-Chain library.
 
-This script demonstrates the five core steps of RAG in a minimal,
-easy-to-understand way:
-1.  Load & Split: A source text is loaded and split into chunks.
-2.  Embed & Store: The chunks are converted to vectors and stored in memory.
-3.  Retrieve: A user question is used to find the most relevant chunks.
-4.  Augment: The question and retrieved context are combined into a prompt.
-5.  Generate: An LLM answers the question based on the prompt.
+This script builds a RAG (Retrieval-Augmented Generation) pipeline that is
+knowledgeable about its own architecture and components. It serves as a
+powerful, self-documenting example of the framework's capabilities.
 
-This entire process runs locally, using models served from LM Studio and
+The process runs entirely locally, using models served from LM Studio and
 an in-memory FAISS vector store.
 """
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
-
 import socket
-
 
 # Import the essential components from our framework
 from minichain.text_splitters import TokenTextSplitter
@@ -39,61 +33,83 @@ def check_server(port: int) -> bool:
         s.settimeout(2)
         return s.connect_ex(('localhost', port)) == 0
 
-def main():
-    """Executes the simple RAG pipeline."""
+def get_library_knowledge() -> str:
+    """
+    Returns the core knowledge base about the Mini-Chain library.
+    This text will be indexed and used by the RAG system to answer questions.
+    """
+    return """
+    **About the Mini-Chain Framework**
 
-    # --- Pre-flight Check ---
-    print_header("Step 0: Pre-flight Check")
+    Mini-Chain is a micro-framework for building applications with Large Language Models.
+    Its core principle is transparency and modularity. Unlike larger frameworks that
+    can feel like a "black box," Mini-Chain provides clean, single-purpose classes
+    for each stage of a RAG pipeline.
+
+    **Core Components:**
+
+    - **Chat Models (`LocalChatModel`, `AzureOpenAIChatModel`):** These classes provide a
+      unified interface to interact with different LLM providers. The `invoke` method is
+      the primary way to get a response.
+
+    - **Embeddings (`LocalEmbeddings`, `AzureOpenAIEmbeddings`):** These are used to convert
+      text into numerical vectors. They have `embed_documents` for lists of texts and
+      `embed_query` for single texts.
+
+    - **Memory (`FAISSVectorStore`, `AzureAISearchVectorStore`):** These components store
+      the vectorized text chunks. `FAISSVectorStore` is a fast, local, in-memory option,
+      perfect for development. It supports saving and loading from disk.
+      `AzureAISearchVectorStore` is a scalable cloud solution for production.
+      The main method is `similarity_search`.
+
+    - **Text Splitters (`TokenTextSplitter`, `RecursiveCharacterTextSplitter`):** These
+      are used to break large documents into smaller, manageable chunks before embedding.
+      `TokenTextSplitter` is recommended as it aligns with how models process tokens.
+
+    - **Prompts (`PromptTemplate`, `FewShotPromptTemplate`, `ChatPromptTemplate`):**
+      Powered by a Jinja2 engine, these classes allow for dynamic and complex prompt
+      creation.
+
+    - **Output Parsers (`PydanticOutputParser`):** This powerful tool ensures that the
+      LLM's output is not just a string, but a validated, type-safe Pydantic object,
+      making the output reliable and easy to use in downstream logic.
+    """
+
+def main():
+    """Executes the Mini-Chain Assistant RAG pipeline."""
+    print_header("Mini-Chain Library Assistant")
+
     if not check_server(1234):
-        print("❌ ERROR: Local server not detected on port 1234.")
-        print("Please start the server in LM Studio and load a chat model and an embedding model.")
+        print("❌ ERROR: Local server not detected on port 1234. Please start LM Studio.")
         return
-    print("✅ Local server detected. The pipeline is a go.")
+    print("✅ Local model server connected.")
 
     # --- Step 1: Initialize Core Components ---
-    print_header("Step 1: Initializing Mini-Chain Components")
-    
-    # All components are the simplest, local-first options.
+    print("\nInitializing Mini-Chain components...")
     embeddings = LocalEmbeddings()
-    text_splitter = TokenTextSplitter(chunk_size=150, chunk_overlap=15)
+    text_splitter = TokenTextSplitter(chunk_size=200, chunk_overlap=20)
     vector_store = FAISSVectorStore(embeddings=embeddings)
     chat_model = LocalChatModel()
-    
-    print("✅ Components Initialized (Embeddings, Splitter, Vector Store, Chat Model)")
+    print("✅ Components Initialized.")
 
-    # --- Step 2: Load, Split, and Index the Data ---
-    print_header("Step 2: Loading and Indexing Knowledge")
-
-    # A simple, fictional knowledge base. The model will not know this information.
-    source_text = """
-    The Chrono-Camera is a fictional device invented by Dr. Aris Thorne in 2042.
-    It does not take pictures of the present, but rather captures faint temporal
-    echoes from the past. The camera requires a rare crystal, "Aethelred," to
-    focus these echoes. Its primary limitation is that it cannot capture images
-    from before the year 1600 due to quantum instability. For support, contact
-    support@thornetechnologies.ai.
-    """
-    
-    print("Splitting the source text into manageable chunks...")
-    documents = text_splitter.create_documents(texts=[source_text])
-    
-    print(f"Indexing {len(documents)} chunks into the FAISS vector store...")
+    # --- Step 2: Load and Index the Library Knowledge ---
+    print("\nLoading and indexing knowledge about the Mini-Chain library...")
+    library_knowledge = get_library_knowledge()
+    documents = text_splitter.create_documents(texts=[library_knowledge])
     vector_store.add_documents(documents)
-    
-    print("✅ Knowledge base is loaded and ready.")
+    print(f"✅ Knowledge base indexed into {len(documents)} chunks.")
 
-    # --- Step 3: Define the RAG Prompt ---
-    print_header("Step 3: Defining the RAG Prompt")
-
-    # This prompt template is the core of our RAG logic.
+    # --- Step 3: Define the Assistant's Prompting Logic ---
     rag_template = PromptTemplate(
         template="""
-You are a helpful assistant. Answer the user's question based ONLY on the
-following context. If the context does not contain the answer, say that you
-do not have enough information.
+You are a professional and helpful technical assistant for the Mini-Chain library.
+Your task is to answer the user's question based ONLY on the provided context.
+If the information is not in the context, clearly state that you cannot answer.
 
 CONTEXT:
+---
 {{ context }}
+---
 
 QUESTION:
 {{ question }}
@@ -101,45 +117,41 @@ QUESTION:
 ANSWER:
 """
     )
-    print("✅ RAG prompt template created.")
+    print("✅ Assistant persona and RAG logic defined.")
 
     # --- Step 4: The Interactive Q&A Loop ---
-    print_header("Step 4: Interactive Q&A")
-    print("The RAG system is ready. Ask a question about the Chrono-Camera.")
+    print_header("Ask Me Anything About Mini-Chain")
     print("Type 'exit' or 'quit' to end the session.")
     
     while True:
         try:
             user_question = input("\nYour Question: ")
             if user_question.lower() in ["exit", "quit"]:
-                print("Exiting RAG session. Goodbye!")
+                print("\nAssistant shutting down. Goodbye!")
                 break
             
-            # 1. RETRIEVE
-            print("-> Retrieving relevant documents from the vector store...")
-            retrieved_results = vector_store.similarity_search(query=user_question, k=2)
-            # We extract just the Document objects from the (Document, score) tuples
+            # 1. RETRIEVE relevant knowledge
+            retrieved_results = vector_store.similarity_search(query=user_question, k=3)
             retrieved_docs = [doc for doc, score in retrieved_results]
             
-            # 2. AUGMENT
+            # 2. AUGMENT the prompt with the retrieved context
             context_string = "\n\n".join([doc.page_content for doc in retrieved_docs])
-            
-            # 3. GENERATE
-            print("-> Generating an answer with the LLM...")
             final_prompt = rag_template.format(context=context_string, question=user_question)
             
+            # 3. GENERATE a precise answer
+            print("-> Thinking...")
             answer = chat_model.invoke(final_prompt)
             
             print("\n" + "-"*70)
-            print("AI Answer:")
+            print("Mini-Chain Assistant:")
             print(answer.strip())
             print("-"*70)
 
         except KeyboardInterrupt:
-            print("\nExiting RAG session. Goodbye!")
+            print("\n\nAssistant shutting down. Goodbye!")
             break
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"\nAn error occurred: {e}")
             break
 
 if __name__ == "__main__":
