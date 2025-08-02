@@ -8,7 +8,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
 from minichain.core.types import SystemMessage, HumanMessage, AIMessage
-from minichain.chat_models.implementations import (
+from minichain.chat_models.azure import (
     
     AzureOpenAIChatModel, 
    

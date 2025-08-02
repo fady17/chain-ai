@@ -162,7 +162,7 @@ def test_integration_with_azure_chat():
     
     try:
         import os
-        from minichain.chat_models.implementations import AzureOpenAIChatModel
+        from minichain.chat_models.azure import AzureOpenAIChatModel
         from minichain.core.types import SystemMessage, HumanMessage
         
         # Check if Azure is configured
