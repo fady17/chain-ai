@@ -33,9 +33,6 @@ This script demonstrates the most fundamental component: connecting to a
 local language model (via LM Studio) and getting a response.
 """
 import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-
 from minichain.chat_models import LocalChatModel
 
 # 1. Initialize the LocalChatModel
