@@ -9,11 +9,13 @@ import numpy as np
 
 try:
     import faiss
+    import numpy as np
 except ImportError:
     raise ImportError(
-        "FAISS is not installed. Please install `faiss-cpu` for CPU support "
-        "or `faiss-gpu` for NVIDIA GPU support."
+        "FAISS dependencies not found. Please run `pip install minichain-ai[local]` "
+        "or `pip install minichain-ai[gpu]` to use FAISSVectorStore."
     )
+
 
 from ..core.types import Document
 from ..embeddings.base import BaseEmbeddings

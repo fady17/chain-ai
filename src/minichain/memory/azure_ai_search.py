@@ -4,15 +4,21 @@ A cloud-based vector store implementation using Azure AI Search.
 """
 import os
 from typing import List, Any, Tuple
-from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ResourceExistsError
-from azure.search.documents import SearchClient
-from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.indexes.models import (
-    SearchIndex, SearchField, SearchFieldDataType,
-    VectorSearch, HnswAlgorithmConfiguration, VectorSearchProfile
-)
-from azure.search.documents.models import VectorizedQuery
+try:
+    from azure.core.credentials import AzureKeyCredential
+    from azure.core.exceptions import ResourceExistsError
+    from azure.search.documents import SearchClient
+    from azure.search.documents.indexes import SearchIndexClient
+    from azure.search.documents.indexes.models import (
+        SearchIndex, SearchField, SearchFieldDataType,
+        VectorSearch, HnswAlgorithmConfiguration, VectorSearchProfile
+    )
+    from azure.search.documents.models import VectorizedQuery
+except ImportError:
+    raise ImportError(
+        "Azure Search dependencies not found. Please run `pip install minichain-ai[azure]` "
+        "to use AzureAISearchVectorStore."
+    )
 
 from ..core.types import Document
 from ..embeddings.base import BaseEmbeddings

@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "minichain-ai"
+version = "0.1.0"
+authors = [
+    { name = "Fady", email = "contact@fadymohamed.com" },
+]
+description = "A micro-framework for building with LLMs, inspired by LangChain."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0",
+    "jinja2>=3.0",
+    "openai>=1.0",
+    "numpy",
+    "tiktoken",
+]
+
+[project.optional-dependencies]
+local = [
+    "faiss-cpu",
+]
+gpu = [
+    "faiss-gpu", # For NVIDIA GPU users
+]
+azure = [
+    "azure-search-documents",
+    "azure-core",
+    "python-dotenv", # Useful for managing Azure keys
+]
+# An 'all' extra is a common convention to install everything.
+all = [
+    "minichain-ai[local]",
+    "minichain-ai[azure]",
+]
+
+[project.urls]
+Homepage = "https://github.com/fady17/minichain"
+Issues = "https://github.com/fady17/minichain/issues"
