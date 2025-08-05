@@ -15,7 +15,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../s
 from minichain.text_splitters import TokenTextSplitter
 from minichain.embeddings import AzureOpenAIEmbeddings
 from minichain.memory import AzureAISearchVectorStore
-from minichain.chat_models import AzureOpenAIChatModel
+from minichain.chat_models import AzureOpenAIChatModel, AzureChatConfig
 from minichain.prompts import PromptTemplate
 
 # 1. Professional Source Data
@@ -33,7 +33,16 @@ load_dotenv()
 print("✅ Azure credentials loaded.")
 embeddings = AzureOpenAIEmbeddings(deployment_name=os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME", ""))
 text_splitter = TokenTextSplitter(chunk_size=150, chunk_overlap=15)
-chat_model = AzureOpenAIChatModel(deployment_name=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", ""))
+azure_config = AzureChatConfig(
+    deployment_name=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", ""),
+    temperature=0.7, # config field
+    max_tokens=100   # another config field
+)
+
+# 3. Pass the single config object
+chat_model = AzureOpenAIChatModel(config=azure_config)
+
+# chat_model = AzureOpenAIChatModel(deployment_name=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", ""))
 index_name = f"prod-demo-{int(time.time())}"
 vector_store = AzureAISearchVectorStore(embeddings, index_name)
 print(f"✅ Azure components initialized. Using temporary index: {index_name}")

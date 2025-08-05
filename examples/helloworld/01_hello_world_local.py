@@ -9,12 +9,14 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.chat_models import LocalChatModel
+from minichain.chat_models import LocalChatModel, LocalChatConfig
 
 # 1. Initialize the LocalChatModel
 # This connects to your LM Studio server running on the default port.
 try:
-    local_model = LocalChatModel()
+    locale_config = LocalChatConfig()
+    local_model = LocalChatModel(config=locale_config)
+
     print("✅ Successfully connected to local model server.")
 except Exception as e:
     print(f"❌ Could not connect to local model server. Is LM Studio running? Error: {e}")

@@ -17,3 +17,9 @@ azure-core
 azure-search-documents
 tiktoken
 # pytest
+# Optional: Voice
+pipecat-ai
+azure-cognitiveservices-speech>=1.34.0
+pyaudio
+webrtcvad==2.0.10
+setuptools

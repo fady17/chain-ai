@@ -15,9 +15,10 @@ The key components exposed are:
 from .base import BaseTextSplitter
 from .character import RecursiveCharacterTextSplitter
 from .token import TokenTextSplitter
-
+from .streaming import StreamingArabicSentenceSplitter
 __all__ = [
     "BaseTextSplitter",
     "RecursiveCharacterTextSplitter",
     "TokenTextSplitter",
+    "StreamingArabicSentenceSplitter",
 ]

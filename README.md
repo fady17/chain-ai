@@ -25,20 +25,14 @@ pip install minichain-ai[all]
 Quick Start
 Here is the simplest possible RAG pipeline with Mini-Chain:
 ```bash
-# examples/01_hello_world_local.py
-"""
-Example 1: The absolute simplest way to use Mini-Chain.
-
-This script demonstrates the most fundamental component: connecting to a
-local language model (via LM Studio) and getting a response.
-"""
-import sys
-from minichain.chat_models import LocalChatModel
+from minichain.chat_models import LocalChatModel, LocalChatConfig
 
 # 1. Initialize the LocalChatModel
 # This connects to your LM Studio server running on the default port.
 try:
-    local_model = LocalChatModel()
+    locale_config = LocalChatConfig()
+    local_model = LocalChatModel(config=locale_config)
+
     print("✅ Successfully connected to local model server.")
 except Exception as e:
     print(f"❌ Could not connect to local model server. Is LM Studio running? Error: {e}")
@@ -52,3 +46,29 @@ response = local_model.invoke(prompt)
 
 print("\nAI Response:")
 print(response)
+```
+
+### Rag
+for local
+
+for azure
+pip install minichain-ai[azure]
+### Voice Assistant `[voice]`
+
+To enable real-time voice conversations, you need to install the `voice` extra.
+This has platform-specific requirements.
+pip install minichain-ai[local]
+**On macOS:**
+First, install the PortAudio C library:
+```bash
+brew install portaudio
+pip install "minichain-ai[voice]"
+```
+On Linux (Debian/Ubuntu):
+First, install the PortAudio C library development files:
+```bash
+sudo apt-get install portaudio19-dev python3-pyaudio
+pip install "minichain-ai[voice]"
+```
+for arch users "you will figure it out"
+

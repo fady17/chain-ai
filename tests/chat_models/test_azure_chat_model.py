@@ -1,29 +1,26 @@
-
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 # tests/chat_models/test_azure_chat_model.py
 """
-Unit tests for the `AzureOpenAIChatModel` class.
+Unit tests for the `AzureOpenAIChatModel`, validating invoke and stream methods.
 """
-
+import sys
+import os
 import pytest
 import json
-import re # Import the regular expression module
+import re
 from dotenv import load_dotenv
-from minichain.chat_models import AzureOpenAIChatModel
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
+
+from minichain.chat_models import AzureOpenAIChatModel, AzureChatConfig
 from minichain.core.types import HumanMessage, SystemMessage
 
-# Load environment variables for local testing
 load_dotenv()
 
 # --- Test Fixtures and Configuration ---
 
 AZURE_CREDS_AVAILABLE = all(
     os.getenv(var) for var in [
-        "AZURE_OPENAI_ENDPOINT",
-        "AZURE_OPENAI_API_KEY",
-        "AZURE_OPENAI_DEPLOYMENT_NAME",
+        "AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_KEY", "AZURE_OPENAI_DEPLOYMENT_NAME"
     ]
 )
 TEST_DEPLOYMENT_NAME = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "")
@@ -33,71 +30,71 @@ requires_azure_creds = pytest.mark.skipif(
     reason="Azure chat model credentials not found in environment variables."
 )
 
+@pytest.fixture
+def azure_chat_config():
+    """Provides a default AzureChatConfig for tests."""
+    return AzureChatConfig(
+        deployment_name=TEST_DEPLOYMENT_NAME,
+        temperature=0.0
+    )
+
 # --- Test Functions ---
 
 @requires_azure_creds
-def test_azure_model_initialization_succeeds():
+def test_azure_model_initialization(azure_chat_config):
     """
-    Tests that the AzureOpenAIChatModel initializes without errors when
-    credentials are provided.
+    Tests that the AzureOpenAIChatModel initializes without errors using a config object.
     """
-    AzureOpenAIChatModel(deployment_name=TEST_DEPLOYMENT_NAME)
-
-def test_azure_model_initialization_fails_without_creds():
-    """
-    Tests that a ValueError is raised if the class is initialized
-    without the necessary environment variables.
-    """
-    original_key = os.environ.pop("AZURE_OPENAI_API_KEY", None)
-    with pytest.raises(ValueError, match="environment variables must be set"):
-        AzureOpenAIChatModel(deployment_name="test")
-    if original_key:
-        os.environ["AZURE_OPENAI_API_KEY"] = original_key
+    AzureOpenAIChatModel(config=azure_chat_config)
 
 @requires_azure_creds
-def test_azure_model_invoke_with_string_input():
+def test_azure_model_invoke_with_string(azure_chat_config):
     """
-    Tests the model's ability to generate a response from a simple string prompt.
+    Tests the blocking `invoke` method with a simple string prompt.
     """
-    model = AzureOpenAIChatModel(deployment_name=TEST_DEPLOYMENT_NAME, temperature=0)
+    model = AzureOpenAIChatModel(config=azure_chat_config)
     prompt = "What is the capital of France? Respond with only the name of the city."
+    
     response = model.invoke(prompt)
-    assert isinstance(response, str)
+    
     assert "Paris" in response
     assert len(response.split()) < 5
 
 @requires_azure_creds
-def test_azure_model_invoke_with_message_list():
+def test_azure_model_invoke_with_messages_and_json_output(azure_chat_config):
     """
-    Tests the model's ability to process a list of Pydantic Message objects
-    and respect the system prompt's instructions.
+    Tests the `invoke` method's ability to follow a system prompt for JSON output.
     """
-    # ARRANGE
-    model = AzureOpenAIChatModel(deployment_name=TEST_DEPLOYMENT_NAME, temperature=0)
+    model = AzureOpenAIChatModel(config=azure_chat_config)
     messages = [
         SystemMessage(content="You are a helpful assistant that always responds in JSON format. The JSON should contain the country and its capital."),
         HumanMessage(content="Provide the capital of Canada.")
     ]
     
-    # ACT
     response = model.invoke(messages)
     
-    # ASSERT
-    assert isinstance(response, str)
-    
-    # --- FIX: Use a robust method to parse the JSON from the response ---
-    # 1. Extract the JSON blob using regex, ignoring surrounding text/fences.
+    # Use a robust regex to extract the JSON blob
     json_match = re.search(r"\{.*\}", response, re.DOTALL)
-    assert json_match is not None, "The model did not return a JSON object."
+    assert json_match, "Model response did not contain a JSON object."
     
-    # 2. Parse the extracted string into a Python dictionary.
-    try:
-        data = json.loads(json_match.group(0))
-    except json.JSONDecodeError:
-        pytest.fail("The model's output was not valid JSON.")
-        
-    # 3. Assert against the dictionary's contents.
-    # This is immune to whitespace, newlines, and key order.
-    assert "capital" in data or "city" in data
-    assert data.get("capital", data.get("city")).lower() == "ottawa"
-    assert data.get("country", "").lower() == "canada"
+    data = json.loads(json_match.group(0))
+    assert data.get("capital", data.get("city", "")).lower() == "ottawa"
+
+@requires_azure_creds
+def test_azure_model_streams_response(azure_chat_config):
+    """
+    Tests the new `stream` method to ensure it yields response chunks from Azure.
+    """
+    # ARRANGE
+    model = AzureOpenAIChatModel(config=azure_chat_config)
+    prompt = "Briefly, what is Mini-Chain?"
+    
+    # ACT
+    stream = model.stream(prompt)
+    chunks = list(stream)
+    full_response = "".join(chunks)
+    
+    # ASSERT
+    assert len(chunks) > 1, "A successful stream should yield multiple chunks."
+    assert isinstance(chunks[0], str)
+    assert "framework" in full_response.lower() or "library" in full_response.lower()

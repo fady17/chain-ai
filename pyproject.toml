@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "minichain-ai"
-version = "0.1.0"
+version = "0.1.2"
 authors = [
     { name = "Fady", email = "contact@fadymohamed.com" },
 ]
@@ -18,6 +18,7 @@ dependencies = [
     "openai>=1.0",
     "numpy",
     "tiktoken",
+    "python-dotenv",
 ]
 
 [project.optional-dependencies]
@@ -30,12 +31,27 @@ gpu = [
 azure = [
     "azure-search-documents",
     "azure-core",
-    "python-dotenv", # Useful for managing Azure keys
+  
 ]
+voice = [
+    "pipecat-ai[silero]", # This pulls in pipecat, onnxruntime, torch, etc.
+    "azure-cognitiveservices-speech>=1.34.0",
+    "pyaudio", # For local microphone and speaker access
+    "websockets",
+  
+]
+# A convenience extra to install everything for development.
+dev = [
+    "minichain-ai[local,gpu,azure,voice]",
+    "pytest",
+    "pytest-asyncio",
+]
+
 # An 'all' extra is a common convention to install everything.
 all = [
     "minichain-ai[local]",
     "minichain-ai[azure]",
+    "minichain-ai[voice]",
 ]
 
 [project.urls]

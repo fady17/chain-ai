@@ -1,20 +1,17 @@
 # src/minichain/chat_models/__init__.py
 """
-This module provides classes for interacting with chat-based language models,
-supporting both cloud-based and local providers.
-
-The key components exposed are:
-    - BaseChatModel: The abstract interface for all chat models.
-    - AzureOpenAIChatModel: For generating chat completions using Azure OpenAI.
-    - LocalChatModel: For generating chat completions using a local, OpenAI-compatible
-      server like LM Studio.
+This module provides classes for interacting with chat-based language models.
 """
-from .base import BaseChatModel
+from .base import BaseChatModel, LocalChatConfig, AzureChatConfig
 from .azure import AzureOpenAIChatModel
 from .local import LocalChatModel
+from .run import run_chat
 
 __all__ = [
     "BaseChatModel",
+    "LocalChatConfig",
+    "AzureChatConfig",
     "AzureOpenAIChatModel",
     "LocalChatModel",
+    "run_chat",
 ]

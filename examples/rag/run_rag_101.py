@@ -18,7 +18,7 @@ import socket
 from minichain.text_splitters import TokenTextSplitter
 from minichain.embeddings import LocalEmbeddings
 from minichain.memory import FAISSVectorStore
-from minichain.chat_models import LocalChatModel
+from minichain.chat_models import LocalChatModel, LocalChatConfig
 from minichain.prompts import PromptTemplate
 
 def print_header(title: str):
@@ -89,7 +89,8 @@ def main():
     embeddings = LocalEmbeddings()
     text_splitter = TokenTextSplitter(chunk_size=200, chunk_overlap=20)
     vector_store = FAISSVectorStore(embeddings=embeddings)
-    chat_model = LocalChatModel()
+    locale_config = LocalChatConfig()
+    chat_model = LocalChatModel(config=locale_config)
     print("✅ Components Initialized.")
 
     # --- Step 2: Load and Index the Library Knowledge ---

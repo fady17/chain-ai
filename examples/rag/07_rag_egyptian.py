@@ -25,12 +25,12 @@ from pydantic import BaseModel, Field
 
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 # Import all necessary Mini-Chain components
 from minichain.text_splitters import TokenTextSplitter
 from minichain.embeddings import AzureOpenAIEmbeddings
 from minichain.memory import AzureAISearchVectorStore
-from minichain.chat_models import AzureOpenAIChatModel
+from minichain.chat_models import AzureOpenAIChatModel, AzureChatConfig
 from minichain.prompts import PromptTemplate
 from minichain.output_parsers import PydanticOutputParser
 
@@ -64,7 +64,15 @@ def main():
 
     # Initialize all Azure components
     embeddings = AzureOpenAIEmbeddings(deployment_name=os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME", ""))
-    chat_model = AzureOpenAIChatModel(deployment_name=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", ""), temperature=0.2)
+    azure_config = AzureChatConfig(
+    deployment_name=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", ""),
+    temperature=0.7, # config field
+    max_tokens=100   # another config field
+)
+
+    # 3. Pass the single config object
+    chat_model = AzureOpenAIChatModel(config=azure_config)
+
     text_splitter = TokenTextSplitter(chunk_size=150, chunk_overlap=15)
     
     index_name = f"advanced-arabic-demo-{int(time.time())}"

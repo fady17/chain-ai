@@ -11,7 +11,7 @@ import os
 from dotenv import load_dotenv
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.chat_models import AzureOpenAIChatModel
+from minichain.chat_models import AzureOpenAIChatModel, AzureChatConfig
 
 # 1. Load Azure credentials from your .env file
 load_dotenv()
@@ -20,10 +20,15 @@ if not os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME"):
     sys.exit(1)
 
 # 2. Initialize the AzureOpenAIChatModel
-# Note: The component is different, but the usage is identical to the local model.
-azure_model = AzureOpenAIChatModel(
-    deployment_name=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", "")
+azure_config = AzureChatConfig(
+    deployment_name=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME", ""),
+    temperature=0.7, # config field
+    max_tokens=100   # another config field
 )
+
+# 3. Pass the single config object
+azure_model = AzureOpenAIChatModel(config=azure_config)
+
 print("✅ Successfully initialized Azure OpenAI chat model.")
 
 # 3. Define a prompt and get a response
