@@ -20,7 +20,7 @@ except ImportError:
     FAISS_INSTALLED = False
 
 from minichain.core.types import Document
-from minichain.memory import FAISSVectorStore
+from minichain.vectors import FAISSVectorStore
 from minichain.embeddings.base import BaseEmbeddings
 
 # --- Mocking Dependencies ---

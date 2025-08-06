@@ -11,7 +11,7 @@ dist
 __pycache__/
 *.py[cod]
 *$py.class
-
+guide.md
 # C extensions
 *.so
 minichain_ai.egg-info

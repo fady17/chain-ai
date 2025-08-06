@@ -1,0 +1,2 @@
+The Minichain library is a lightweight LangChain alternative.
+It was created by Fady Mohamed during his internship at IST Networks.

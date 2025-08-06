@@ -12,6 +12,7 @@ from .types import (
     HumanMessage,
     AIMessage,
     SystemMessage,
+    ConversationalTurn,
 )
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "HumanMessage",
     "AIMessage",
     "SystemMessage",
+    "ConversationalTurn",
 ]

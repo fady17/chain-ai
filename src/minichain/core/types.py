@@ -3,6 +3,7 @@
 Core data structures for Mini-Chain Framework, now powered by Pydantic.
 """
 from typing import Dict, Any, Optional
+import uuid
 from pydantic import BaseModel, Field
 
 class Document(BaseModel):
@@ -35,3 +36,13 @@ class AIMessage(BaseMessage):
 class SystemMessage(BaseMessage):
     """System instruction message."""
     pass
+
+class ConversationalTurn(BaseModel):
+    """
+    A Pydantic model representing a single, structured turn in a conversation.
+    This explicitly links the user's input to the AI's output and provides
+    a unique ID for traceability.
+    """
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_message: HumanMessage
+    ai_message: AIMessage

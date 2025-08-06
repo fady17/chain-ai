@@ -4,7 +4,7 @@ An output parser that uses Pydantic for robust, type-safe parsing.
 """
 import json
 import re
-from typing import Type, TypeVar, Generic
+from typing import Any, Type, TypeVar, Generic
 from pydantic import BaseModel, ValidationError
 
 T = TypeVar("T", bound=BaseModel)
@@ -66,3 +66,5 @@ class PydanticOutputParser(Generic[T]):
                 f"Failed to parse LLM output into {self.pydantic_object.__name__}. Error: {e}\n"
                 f"Raw output:\n---\n{text}\n---"
             )
+    def invoke(self, input: str, **kwargs: Any) -> T:
+        return self.parse(input)

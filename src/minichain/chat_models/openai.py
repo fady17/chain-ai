@@ -1,4 +1,4 @@
-# src/minichain/chat_models/openai_like.py
+# src/minichain/chat_models/openai.py
 """
 Provides a base class for chat models that use an OpenAI-compatible API.
 This centralizes logic for both blocking (`invoke`) and streaming (`stream`)
@@ -15,10 +15,11 @@ class OpenAILikeChatModel(BaseChatModel):
     """
     A base class that handles core logic for OpenAI-compatible chat APIs.
     """
-    client: OpenAI | AzureOpenAI
+    # client: OpenAI | AzureOpenAI
+    client: Union[OpenAI,AzureOpenAI]
     model_name: str
     temperature: float = 0.7
-    max_tokens: int | None = None
+    max_tokens: Union[int, None] = None
     kwargs: Dict[str, Any]
 
     def _messages_to_openai_format(self, messages: List[BaseMessage]) -> List[ChatCompletionMessageParam]:
@@ -59,7 +60,7 @@ class OpenAILikeChatModel(BaseChatModel):
             
         stream = self.client.chat.completions.create(**completion_params)
         
-        # --- FIX: A robust loop to handle all stream events ---
+        # ---  loop to handle all stream events ---
         for chunk in stream:
             # Check if the choices list is not empty. Some chunks are for
             # metadata and have an empty choices list.
@@ -68,4 +69,4 @@ class OpenAILikeChatModel(BaseChatModel):
                 # The content can also be None in some chunks, so check for that too.
                 if content is not None:
                     yield content
-        # --- END FIX ---
+  

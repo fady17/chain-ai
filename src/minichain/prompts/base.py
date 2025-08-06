@@ -36,6 +36,10 @@ class BasePromptTemplate(ABC):
         This provides an API consistent with other components in the framework.
         """
         return self.format(**variables)
+    # def invoke(self, variables: Dict[str, Any], **kwargs: Any) -> Any:
+    #     return self.format(**variables)
+    
+    
 
     def _validate_variables(self, variables: Dict[str, Any]) -> None:
         """

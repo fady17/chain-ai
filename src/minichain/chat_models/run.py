@@ -6,7 +6,7 @@ from typing import List, Dict, Union
 from .base import BaseChatModel
 from ..core.types import SystemMessage, HumanMessage, AIMessage, BaseMessage
 
-def run_chat(model: BaseChatModel, system_prompt: str | None = None):
+def run_chat(model: BaseChatModel, system_prompt: Union[str, None] = None):
     """
     Starts an interactive, streaming chat session in the terminal.
 

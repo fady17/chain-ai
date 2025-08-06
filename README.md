@@ -25,50 +25,87 @@ pip install minichain-ai[all]
 Quick Start
 Here is the simplest possible RAG pipeline with Mini-Chain:
 ```bash
-from minichain.chat_models import LocalChatModel, LocalChatConfig
+pip install minichain-ai[local]
 
-# 1. Initialize the LocalChatModel
-# This connects to your LM Studio server running on the default port.
-try:
-    locale_config = LocalChatConfig()
-    local_model = LocalChatModel(config=locale_config)
+from minichain.rag_runner import create_rag_from_files
 
-    print("✅ Successfully connected to local model server.")
-except Exception as e:
-    print(f"❌ Could not connect to local model server. Is LM Studio running? Error: {e}")
-    sys.exit(1)
+# Load knowledge from files
+rag = create_rag_from_files(
+    file_paths=["path/manual.txt", "README.md"],
+    system_prompt="You are a documentation assistant.",
+    chunk_size=500,
+    retrieval_k=3
+)
+rag.run_chat()
+```
+### To Read the full directory
+```bash
+from minichain.rag_runner import create_rag_from_directory
 
-# 2. Define a prompt and get a response
-prompt = "In one sentence, what is the purpose of a CPU?"
-print(f"\nUser Prompt: {prompt}")
-
-response = local_model.invoke(prompt)
-
-print("\nAI Response:")
-print(response)
+# Load all Python files from a directory
+rag = create_rag_from_directory(
+    directory="./src",
+    file_extensions=['.py', '.md'],
+    system_prompt="You are a code assistant."
+)
+rag.run_chat()
 ```
 
-### Rag
-for local
+### Custom RAG Configuration
+```bash
+from minichain.rag_runner import RAGRunner, RAGConfig
+
+config = RAGConfig(
+    knowledge_texts=["Your knowledge here..."],
+    knowledge_files=["file1.txt", "file2.md"],
+    
+    # Chunking settings
+    chunk_size=1000,
+    chunk_overlap=200,
+    
+    # Retrieval settings
+    retrieval_k=4,
+    similarity_threshold=0.7,  # Only include high-similarity results
+    
+    # Chat settings
+    system_prompt="Custom system prompt...",
+    conversation_keywords=["custom", "keywords", "for", "conversation", "detection"],
+    
+    # Components (optional - uses defaults if not provided)
+    chat_model=None,  # Will use LocalChatModel
+    embeddings=None,  # Will use LocalEmbeddings
+    text_splitter=None,  # Will use RecursiveCharacterTextSplitter
+    vector_store=None,  # Will create FAISSVectorStore
+    
+    debug=True  # Enable debug output
+)
+
+rag = RAGRunner(config).setup()
+rag.run_chat()
+```
+### Using Custom Components
+```bash
+from minichain.rag_runner import RAGConfig, RAGRunner
+from minichain.chat_models import LocalChatModel, LocalChatConfig
+from minichain.embeddings import LocalEmbeddings
+from minichain.text_splitters import RecursiveCharacterTextSplitter
+
+# Custom components
+custom_model = LocalChatModel(LocalChatConfig(temperature=0.7))
+custom_embeddings = LocalEmbeddings()
+custom_splitter = RecursiveCharacterTextSplitter(chunk_size=800)
+
+config = RAGConfig(
+    knowledge_texts=["Your knowledge..."],
+    chat_model=custom_model,
+    embeddings=custom_embeddings,
+    text_splitter=custom_splitter,
+)
+
+rag = RAGRunner(config).setup()
+rag.run_chat()
+```
+
 
 for azure
 pip install minichain-ai[azure]
-### Voice Assistant `[voice]`
-
-To enable real-time voice conversations, you need to install the `voice` extra.
-This has platform-specific requirements.
-pip install minichain-ai[local]
-**On macOS:**
-First, install the PortAudio C library:
-```bash
-brew install portaudio
-pip install "minichain-ai[voice]"
-```
-On Linux (Debian/Ubuntu):
-First, install the PortAudio C library development files:
-```bash
-sudo apt-get install portaudio19-dev python3-pyaudio
-pip install "minichain-ai[voice]"
-```
-for arch users "you will figure it out"
-

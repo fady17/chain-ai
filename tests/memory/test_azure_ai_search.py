@@ -14,7 +14,7 @@ import time
 import pytest
 from dotenv import load_dotenv
 from minichain.core.types import Document
-from minichain.memory import AzureAISearchVectorStore
+from minichain.vectors import AzureAISearchVectorStore
 from minichain.embeddings.base import BaseEmbeddings
 import numpy as np
 

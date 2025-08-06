@@ -3,7 +3,7 @@
 Provides a base class for embedding models that use an OpenAI-compatible API.
 This reduces code duplication between different provider implementations (e.g., Azure, local).
 """
-from typing import List
+from typing import List, Union
 from openai import OpenAI, AzureOpenAI
 from minichain.embeddings.base import BaseEmbeddings
 
@@ -12,7 +12,7 @@ class OpenAILikeEmbeddings(BaseEmbeddings):
     A base class that handles the core logic for embedding text using an
     API that follows the OpenAI SDK's conventions.
     """
-    client: OpenAI | AzureOpenAI
+    client: Union[OpenAI, AzureOpenAI]
     model_name: str # The model/deployment name to be passed to the API
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:

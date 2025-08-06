@@ -1,28 +1,22 @@
 # Core libraries
 openai
-google-generativeai
+
 jinja2
 
 # Local embeddings & vector search
-sentence-transformers
+
 faiss-cpu
 numpy
 pydantic_settings
 python-dotenv
 
-tenacity
-qdrant-client
-azure-ai-inference
+
+
 azure-core
 azure-search-documents
 tiktoken
 # pytest
 # Optional: Voice
-pipecat-ai
-azure-cognitiveservices-speech>=1.34.0
-pyaudio
-webrtcvad==2.0.10
-setuptools
 
-numpy
-loguru
+
+setuptools
