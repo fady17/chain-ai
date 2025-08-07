@@ -7,7 +7,7 @@ from minichain.chat_models import LocalChatModel, LocalChatConfig,OpenRouterConf
 # One-liner for LocalChatModel
 local_model = LocalChatModel(config=LocalChatConfig())
 
-model = OpenRouterChatModel(config=OpenRouterConfig(model_name="qwen/qwen3-235b-a22b:free", temperature=0))
+model = OpenRouterChatModel(config=OpenRouterConfig(model="qwen/qwen3-235b-a22b:free", temperature=0))
 
 print("qwenLocal: " +local_model.invoke("what's your name"))
 

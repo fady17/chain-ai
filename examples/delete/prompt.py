@@ -12,7 +12,7 @@ prompt_template = PromptTemplate.from_template("Tell me a joke about {{topic}}")
 
 prompt_template.invoke({"topic": "cats"})
 config = OpenRouterConfig(
-    model_name="qwen/qwen3-235b-a22b:free",  # Or any model from OpenRouter
+    model="qwen/qwen3-235b-a22b:free", 
 )
 
 llm = OpenRouterChatModel(config=config)
