@@ -5,14 +5,13 @@ The TokenTextSplitter is available as an optional dependency.
 """
 from .base import BaseTextSplitter
 from .character import RecursiveCharacterTextSplitter
-from .streaming import StreamingArabicSentenceSplitter
+
 
 __all__ = [
     "BaseTextSplitter",
     "RecursiveCharacterTextSplitter",
-    # "CharacterTextSplitter",
-    # "RecursiveCharacterTextSplitter",
-    "StreamingArabicSentenceSplitter",
+    
+   
 ]
 
 # --- Graceful import for TokenTextSplitter ---

@@ -5,15 +5,15 @@ Example 1: A simple, interactive chat session.
 This script demonstrates the high-level `run_chat` function, which provides
 the easiest way to start a conversation with a configured model.
 """
-import os, sys
-from dotenv import load_dotenv
+# import os, sys
+# # from dotenv import load_dotenv
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
+# # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
 from minichain.chat_models import LocalChatModel, LocalChatConfig, run_chat
 
 def main():
-    load_dotenv()
+
     
     # 1. Create a Pydantic configuration object.
     #    This cleanly separates configuration from code.

@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "minichain-ai"
-version = "4.4.7"
+name = "chain-ai"
+version = "1.0.0"
 authors = [
     { name = "Fady", email = "contact@fadymohamed.com" },
 ]
@@ -21,13 +21,13 @@ dependencies = [
 
 [project.optional-dependencies]
 local = [
-    "faiss-cpu",
-    "numpy",
+    "faiss-cpu>=1.7.4,<1.12",  # stable range, avoids mismatch with NumPy 2.x
+    "numpy>=1.22,<2.0",        # prevent deprecation warnings
     
 ]
 gpu = [
-    "faiss-gpu", # For NVIDIA GPU users
-    "numpy",
+    "faiss-gpu>=1.7.4,<1.12",
+    "numpy>=1.22,<2.0",
 ]
 azure = [
     "azure-search-documents",

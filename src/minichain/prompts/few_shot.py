@@ -65,9 +65,22 @@ class FewShotPromptTemplate(BasePromptTemplate):
         # Assemble the final prompt parts
         prompt_parts = [self.prefix, example_str]
         
-        # --- FIX: Correctly render the suffix with the main input ---
+        # --- render the suffix with the main input ---
         formatted_suffix = self.suffix_template.render(**main_input)
         prompt_parts.append(formatted_suffix)
         
         # Join all non-empty parts of the prompt
         return self.example_separator.join(filter(None, prompt_parts))
+    def invoke(self, variables: Dict[str, Any]) -> 'StringPromptResult':
+        formatted = self.format(**variables)
+        return StringPromptResult(formatted)
+
+class StringPromptResult:
+    def __init__(self, value: str):
+        self.value = value
+
+    def to_string(self) -> str:
+        return self.value
+
+    def __str__(self):
+        return self.value

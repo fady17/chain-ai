@@ -52,3 +52,6 @@ class BasePromptTemplate(ABC):
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}(input_variables={self.input_variables})"
+    
+    def to_string(self) -> str:
+        raise NotImplementedError("This prompt template must implement `to_string()` explicitly.")

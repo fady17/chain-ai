@@ -1,6 +1,6 @@
 # src/minichain/output_parsers/pydantic_parser.py
 """
-An output parser that uses Pydantic for robust, type-safe parsing.
+An output parser that uses Pydantic for type-safe parsing.
 """
 import json
 import re

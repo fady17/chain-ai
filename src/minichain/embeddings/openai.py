@@ -23,7 +23,7 @@ class OpenAILikeEmbeddings(BaseEmbeddings):
             return []
         
         # Replace empty strings with a single space, as some APIs fail on empty input
-        processed_texts = [text or " " for text in texts]
+        processed_texts = [text.strip() or " " for text in texts]
         
         response = self.client.embeddings.create(
             input=processed_texts,
@@ -33,7 +33,12 @@ class OpenAILikeEmbeddings(BaseEmbeddings):
 
     def embed_query(self, text: str) -> List[float]:
         """Embeds a single query."""
+        response = self.client.embeddings.create(
+            input=[text],
+            model=self.model_name
+        )
+        return response.data[0].embedding
         # We can reuse the batch method for a single item for consistency.
         # This also benefits from the empty string handling.
-        embeddings = self.embed_documents([text])
-        return embeddings[0]
+        # embeddings = self.embed_documents([text])
+        # return embeddings[0]

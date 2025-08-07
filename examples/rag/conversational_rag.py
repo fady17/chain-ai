@@ -4,9 +4,9 @@ Simple example using the new RAG runner.
 This replaces your original conversational_rag.py with much less code.
 """
 
-# import sys
-# import os
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
 from minichain.rag_runner import create_rag_from_texts
 

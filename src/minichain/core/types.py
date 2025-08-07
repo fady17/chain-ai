@@ -46,3 +46,37 @@ class ConversationalTurn(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_message: HumanMessage
     ai_message: AIMessage
+
+class TokenUsage(BaseModel):
+    """A Pydantic model to represent token usage data from an LLM call."""
+    completion_tokens: Optional[int] = None
+    prompt_tokens: Optional[int] = None
+    total_tokens: Optional[int] = None
+
+class ChatResult(BaseModel):
+    """
+    The structured output of a chat model generation.
+    
+    This provides not just the text content, but also valuable metadata about
+    the generation, such as token usage and the raw provider response.
+    """
+    content: str = Field(description="The string content of the generated message.")
+    model_name: str = Field(description="The name of the model used for the generation.")
+    token_usage: TokenUsage = Field(default_factory=TokenUsage, description="Token usage statistics.")
+    finish_reason: Optional[str] = Field(None, description="The reason the model stopped generating tokens.")
+    raw: Optional[Any] = Field(None, description="The raw, original response object from the provider for debugging.")
+    
+    def __str__(self) -> str:
+        """
+        When the object is printed, it behaves like a simple string,
+        returning only its content.
+        """
+        return self.content
+
+    def __repr__(self) -> str:
+        """Provides a more detailed representation for debugging."""
+        return (
+            f"ChatResult(content='{self.content[:50]}...', "
+            f"model_name='{self.model_name}', "
+            f"finish_reason='{self.finish_reason}')"
+        )
