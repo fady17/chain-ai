@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Document Chat</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: white;
+            color: black;
+            line-height: 1.5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        .upload-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .file-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            background: black;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background: #333;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .status.success {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+        }
+        
+        .status.error {
+            background: #f8f8f8;
+            border: 1px solid #999;
+        }
+        
+        .chat-section {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .message.user {
+            background: #f5f5f5;
+            margin-left: 20px;
+            text-align: right;
+        }
+        
+        .message.assistant {
+            background: #fafafa;
+            margin-right: 20px;
+            border: 1px solid #eee;
+        }
+        
+        .input-section {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef } = React;
+
+        function App() {
+            const [file, setFile] = useState(null);
+            const [uploadStatus, setUploadStatus] = useState('');
+            const [messages, setMessages] = useState([]);
+            const [question, setQuestion] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [documentUploaded, setDocumentUploaded] = useState(false);
+            const fileInputRef = useRef();
+
+            const handleFileChange = (e) => {
+                setFile(e.target.files[0]);
+                setUploadStatus('');
+            };
+
+            const uploadFile = async () => {
+                if (!file) {
+                    setUploadStatus('Please select a file first');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', file);
+                setLoading(true);
+
+                try {
+                    const response = await fetch('http://localhost:8000/upload', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        setUploadStatus(`✅ ${result.message} (${result.chunks_created} chunks created)`);
+                        setDocumentUploaded(true);
+                        setMessages([{
+                            type: 'assistant',
+                            text: `Document "${file.name}" uploaded successfully! You can now ask questions about it.`
+                        }]);
+                    } else {
+                        setUploadStatus(`❌ Error: ${result.detail}`);
+                    }
+                } catch (error) {
+                    setUploadStatus(`❌ Error: ${error.message}`);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const askQuestion = async () => {
+                if (!question.trim()) return;
+                if (!documentUploaded) {
+                    alert('Please upload a document first');
+                    return;
+                }
+
+                const userMessage = { type: 'user', text: question };
+                setMessages(prev => [...prev, userMessage]);
+                setQuestion('');
+                setLoading(true);
+
+                try {
+                    const response = await fetch('http://localhost:8000/query', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            question: question,
+                            include_context: true,
+                            retrieval_k: 3
+                        }),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        const assistantMessage = { type: 'assistant', text: result.answer };
+                        setMessages(prev => [...prev, assistantMessage]);
+                    } else {
+                        const errorMessage = { type: 'assistant', text: `Error: ${result.detail}` };
+                        setMessages(prev => [...prev, errorMessage]);
+                    }
+                } catch (error) {
+                    const errorMessage = { type: 'assistant', text: `Error: ${error.message}` };
+                    setMessages(prev => [...prev, errorMessage]);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    askQuestion();
+                }
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>RAG Document Chat</h1>
+                        <p>Upload a document and ask questions about it</p>
+                    </div>
+
+                    <div className="upload-section">
+                        <h3>Upload Document</h3>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            onChange={handleFileChange}
+                            accept=".pdf,.txt,.md,.py"
+                            className="file-input"
+                        />
+                        <button 
+                            onClick={uploadFile} 
+                            disabled={loading || !file}
+                            className="btn"
+                        >
+                            {loading ? 'Uploading...' : 'Upload & Index'}
+                        </button>
+                        
+                        {uploadStatus && (
+                            <div className={`status ${uploadStatus.includes('✅') ? 'success' : 'error'}`}>
+                                {uploadStatus}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="chat-section">
+                        <div className="messages">
+                            {messages.length === 0 && !documentUploaded && (
+                                <div className="loading">
+                                    Upload a document to start chatting...
+                                </div>
+                            )}
+                            
+                            {messages.map((message, index) => (
+                                <div key={index} className={`message ${message.type}`}>
+                                    <strong>{message.type === 'user' ? 'You' : 'AI'}:</strong>
+                                    <div style={{marginTop: '5px'}}>
+                                        {message.text}
+                                    </div>
+                                </div>
+                            ))}
+                            
+                            {loading && messages.length > 0 && (
+                                <div className="message assistant">
+                                    <div className="loading">AI is thinking...</div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="input-section">
+                            <input
+                                type="text"
+                                value={question}
+                                onChange={(e) => setQuestion(e.target.value)}
+                                onKeyPress={handleKeyPress}
+                                placeholder={documentUploaded ? "Ask a question about your document..." : "Upload a document first"}
+                                disabled={!documentUploaded || loading}
+                                className="message-input"
+                            />
+                            <button 
+                                onClick={askQuestion}
+                                disabled={!documentUploaded || loading || !question.trim()}
+                                className="btn"
+                            >
+                                {loading ? '...' : 'Ask'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

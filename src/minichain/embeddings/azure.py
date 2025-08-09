@@ -5,7 +5,8 @@ Implementation for Azure OpenAI embedding models.
 import os
 from openai import AzureOpenAI
 from minichain.embeddings.openai import OpenAILikeEmbeddings # Inherit from our new base class
-
+from dotenv import load_dotenv
+load_dotenv()
 class AzureOpenAIEmbeddings(OpenAILikeEmbeddings):
     """
     Connects to an Azure OpenAI deployment to generate text embeddings.

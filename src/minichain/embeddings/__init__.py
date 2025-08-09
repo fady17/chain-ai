@@ -9,10 +9,12 @@ The key components exposed are:
     - LocalEmbeddings: For generating embeddings using a local, OpenAI-compatible
       server like LM Studio.
 """
+from dotenv import load_dotenv
 from .base import BaseEmbeddings
 from .azure import AzureOpenAIEmbeddings
 from .local import LocalEmbeddings
 
+load_dotenv()
 __all__ = [
     "BaseEmbeddings",
     "AzureOpenAIEmbeddings",
