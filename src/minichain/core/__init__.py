@@ -14,6 +14,8 @@ from .types import (
     SystemMessage,
     ConversationalTurn,
 )
+from .utils import PrettyDict
+
 
 __all__ = [
     "Document",
@@ -22,4 +24,5 @@ __all__ = [
     "AIMessage",
     "SystemMessage",
     "ConversationalTurn",
+    "PrettyDict",
 ]

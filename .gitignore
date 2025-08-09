@@ -108,3 +108,4 @@ Thumbs.db
 .ipynb_checkpoints
 .vscode
 examples/rag0
+tests/prompts

@@ -10,11 +10,14 @@ The key component exposed is:
     - PydanticOutputParser: A powerful and robust parser that leverages Pydantic
       models to define the desired output schema and validate the LLM's response.
 """
+from .base import BaseOutputParser
 from .pydantic_parser import PydanticOutputParser
-
+from .json_parser import JsonOutputParser
 # The __all__ variable explicitly defines the public API of this module.
 # When a user does `from minichain.output_parsers import *`, only the names
 # listed here will be imported.
 __all__ = [
+    "BaseOutputParser",
     "PydanticOutputParser",
+    "JsonOutputParser",
 ]

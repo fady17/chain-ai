@@ -9,7 +9,7 @@ faiss-cpu
 numpy
 pydantic_settings
 python-dotenv
-
+langchain-text-splitters
 
 
 azure-core

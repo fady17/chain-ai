@@ -1,18 +1,17 @@
 # src/minichain/output_parsers/pydantic_parser.py
-"""
-An output parser that uses Pydantic for type-safe parsing.
-"""
+
 import json
-import re
 from typing import Any, Type, TypeVar, Generic
 from pydantic import BaseModel, ValidationError
 
+from .base import BaseOutputParser
+from ..utils.json_utils import parse_json_markdown
+
 T = TypeVar("T", bound=BaseModel)
 
-class PydanticOutputParser(Generic[T]):
+class PydanticOutputParser(BaseOutputParser, Generic[T]):
     """
-    A generic class that parses LLM string output into a specific
-    Pydantic model instance, T.
+    Parses LLM output into a Pydantic model using a robust JSON extractor.
     """
     pydantic_object: Type[T]
 
@@ -20,51 +19,33 @@ class PydanticOutputParser(Generic[T]):
         self.pydantic_object = pydantic_object
 
     def get_format_instructions(self) -> str:
-        """
-        Generates clear, human-readable instructions for the LLM on how to
-        format its output as JSON, focusing on the required keys and their purpose.
-        """
+        """Generates clear instructions for the LLM, including the JSON schema."""
         schema = self.pydantic_object.model_json_schema()
+        # Clean up the schema for a clearer prompt
+        if "title" in schema: del schema["title"]
+        if "type" in schema: del schema["type"]
+        schema_str = json.dumps(schema)
 
-        # Create a dictionary of { "field_name": "field_description" }
-        # This is much clearer for the LLM than a full JSON schema.
-        field_descriptions = {
-            k: v.get("description", "")
-            for k, v in schema.get("properties", {}).items()
-        }
-
-        # Build a robust instruction string that is less likely to be misinterpreted.
-        instructions = [
-            "Your response must be a single, valid JSON object.",
-            "Do not include any other text, explanations, or markdown code fences.",
-            "The JSON object must have the following keys:",
-        ]
-        for name, desc in field_descriptions.items():
-            instructions.append(f'- "{name}": (Description: {desc})')
-        
-        instructions.append("\nPopulate the string values for these keys based on the user's query.")
-        return "\n".join(instructions)
-
+        return (
+            f"Your response MUST be a valid JSON object conforming to the following JSON schema.\n"
+            f"Enclose the JSON in a single ```json markdown code block.\n"
+            f"Schema:\n{schema_str}"
+        )
 
     def parse(self, text: str) -> T:
         """
-        Parses the string output from an LLM into an instance of the target
-        Pydantic model (T).
+        Parses the string output and validates it with the Pydantic model.
         """
         try:
-            # Use regex to find the first '{' and last '}' to isolate the JSON blob.
-            match = re.search(r"\{.*\}", text, re.DOTALL)
-            if not match:
-                raise json.JSONDecodeError("No JSON object found in the output.", text, 0)
-
-            json_string = match.group(0)
-            json_object = json.loads(json_string)
+            # Use our new, robust utility to get the JSON dictionary
+            json_dict = parse_json_markdown(text)
             
-            return self.pydantic_object.model_validate(json_object)
-        except (json.JSONDecodeError, ValidationError) as e:
+            # Validate the dictionary with the Pydantic model
+            return self.pydantic_object.model_validate(json_dict)
+        
+        except (ValueError, ValidationError) as e:
+            # If parsing or validation fails, raise a detailed error
             raise ValueError(
-                f"Failed to parse LLM output into {self.pydantic_object.__name__}. Error: {e}\n"
-                f"Raw output:\n---\n{text}\n---"
+                f"Failed to parse Pydantic model '{self.pydantic_object.__name__}'. Error: {e}\n"
+                f"Raw LLM output:\n---\n{text}\n---"
             )
-    def invoke(self, input: str, **kwargs: Any) -> T:
-        return self.parse(input)

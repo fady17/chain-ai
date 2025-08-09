@@ -7,16 +7,19 @@ from minichain.chat_models import OpenRouterChatModel
 
 from minichain.prompts import FewShotPromptTemplate
 from minichain.prompts.prompt_template import PromptTemplate
+from minichain.chat_models.base import LocalChatConfig
+from minichain.chat_models.local import LocalChatModel
 
 prompt_template = PromptTemplate.from_template("Tell me a joke about {{topic}}")
 
 prompt_template.invoke({"topic": "cats"})
-config = OpenRouterConfig(
-    model="qwen/qwen3-235b-a22b:free", 
-)
+# config = OpenRouterConfig(
+#     model="qwen/qwen3-235b-a22b:free", 
+# )
+config = LocalChatConfig(model="qwen2.5-7b-instruct")
 
-llm = OpenRouterChatModel(config=config)
-llm.invoke(prompt_template.invoke({"topic": "cats"}))
+llm = LocalChatModel(config=config)
+# llm.invoke(prompt_template.invoke({"topic": "cats"}))
 example_prompt = PromptTemplate.from_template("Question: {{question}}\n{{answer}}")
 examples = [
     {

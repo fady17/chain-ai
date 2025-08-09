@@ -3,20 +3,21 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "chain-ai"
-version = "1.0.0"
+name = "minichain-ai"
+version = "8.0.0"
 authors = [
     { name = "Fady", email = "contact@fadymohamed.com" },
 ]
 description = "A micro-framework for building with LLMs, inspired by LangChain."
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.6"
+requires-python = ">=3.9"
 dependencies = [
     "pydantic>=2.0",
     "jinja2>=3.0",
     "openai>=1.0",
     "python-dotenv",
+    "langchain-text-splitters",
 ]
 
 [project.optional-dependencies]
@@ -34,15 +35,13 @@ azure = [
     "azure-core",
   
 ]
-token_splitter = [
-    "tiktoken>=0.5.0"
-]
+
 
 # An 'all' extra is a common convention to install everything.
 all = [
     "minichain-ai[local]",
     "minichain-ai[azure]",
-    "minichain-ai[token_splitter]"
+  
   
 ]
 

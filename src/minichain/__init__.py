@@ -10,3 +10,9 @@ For example:
     from minichain.memory import FAISSVectorStore
     from minichain.voice import run_stt
 """
+from . import chains 
+from pydantic import BaseModel, Field
+__all__ = [
+    "BaseModel",
+    "Field",
+]

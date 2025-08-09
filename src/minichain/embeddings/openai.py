@@ -38,7 +38,4 @@ class OpenAILikeEmbeddings(BaseEmbeddings):
             model=self.model_name
         )
         return response.data[0].embedding
-        # We can reuse the batch method for a single item for consistency.
-        # This also benefits from the empty string handling.
-        # embeddings = self.embed_documents([text])
-        # return embeddings[0]
+    

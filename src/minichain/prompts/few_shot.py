@@ -71,7 +71,7 @@ class FewShotPromptTemplate(BasePromptTemplate):
         
         # Join all non-empty parts of the prompt
         return self.example_separator.join(filter(None, prompt_parts))
-    def invoke(self, variables: Dict[str, Any]) -> 'StringPromptResult':
+    def invoke(self, variables: Dict[str, Any]) -> 'StringPromptResult': # type: ignore
         formatted = self.format(**variables)
         return StringPromptResult(formatted)
 
