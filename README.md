@@ -1,6 +1,6 @@
 # Mini-Chain
 
-**Mini-Chain** is a micro-framework for building applications with Large Language Models, inspired by LangChain. Its core principle is transparency and modularity, providing a "glass-box" design for engineers who value control and clarity.
+**Mini-Chain** is a micro-framework for building applications with Large Language Models, inspired by LangChain.
 
 ## Core Features
 
@@ -17,6 +17,8 @@ pip install minichain-ai
 pip install minichain-ai[local]
 #For NVIDIA GPU FAISS Support:
 pip install minichain-ai[gpu]
+#For pdf parser(pymupdf)
+pip install minichain-ai[pdf]
 #For Azure Support (Azure AI Search, Azure OpenAI):
 pip install minichain-ai[azure]
 #To install everything:
@@ -105,7 +107,17 @@ config = RAGConfig(
 rag = RAGRunner(config).setup()
 rag.run_chat()
 ```
+pip install minichain-ai[pdf]
+```bash
+from minichain.rag_runner import create_smart_rag
 
+# Load PDF and create RAG
+rag = create_smart_rag(knowledge_files=["resume.pdf"])
 
-for azure
+# Query the PDF
+response = rag.query("Can he vibe code ?")
+print(response)
+```
+
+for azure ai search
 pip install minichain-ai[azure]

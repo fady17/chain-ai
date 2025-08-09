@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "minichain-ai"
-version = "8.0.5"
+version = "9.0.0"
 authors = [
     { name = "Fady", email = "contact@fadymohamed.com" },
 ]
@@ -35,12 +35,16 @@ azure = [
     "azure-core",
   
 ]
+pdf = ["pymupdf>=1.23.0"]
+
 
 
 # An 'all' extra is a common convention to install everything.
 all = [
     "minichain-ai[local]",
     "minichain-ai[azure]",
+    "minichain-ai[pdf]",
+
   
   
 ]

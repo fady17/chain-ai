@@ -11,7 +11,7 @@ pydantic_settings
 python-dotenv
 langchain-text-splitters
 
-
+pymupdf
 azure-core
 azure-search-documents
 tiktoken
