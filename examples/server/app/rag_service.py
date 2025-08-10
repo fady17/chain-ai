@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../src')))
 
-from minichain.rag_runner import create_smart_rag, RAGRunner
+from chain.rag_runner import create_smart_rag, RAGRunner
 from pathlib import Path
 from typing import Dict, List, Optional
 import uuid

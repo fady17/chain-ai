@@ -11,7 +11,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.prompts import PromptTemplate, FewShotPromptTemplate, ChatPromptTemplate
+from chain.prompts import PromptTemplate, FewShotPromptTemplate, ChatPromptTemplate
 
 def print_header(title): print(f"\n--- {title} ---")
 

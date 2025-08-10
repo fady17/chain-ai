@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "minichain-ai"
-version = "9.0.0"
+name = "chain-ai"
+version = "0.0.1"
 authors = [
     { name = "Fady", email = "contact@fadymohamed.com" },
 ]
@@ -41,9 +41,9 @@ pdf = ["pymupdf>=1.23.0"]
 
 # An 'all' extra is a common convention to install everything.
 all = [
-    "minichain-ai[local]",
-    "minichain-ai[azure]",
-    "minichain-ai[pdf]",
+    "chain-ai[local]",
+    "chain-ai[azure]",
+    "chain-ai[pdf]",
 
   
   

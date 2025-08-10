@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.chat_models import LocalChatModel, LocalChatConfig,OpenRouterConfig,OpenRouterChatModel, AzureOpenAIChatModel, AzureChatConfig
+from chain.chat_models import LocalChatModel, LocalChatConfig,OpenRouterConfig,OpenRouterChatModel, AzureOpenAIChatModel, AzureChatConfig
 
 # One-liner for LocalChatModel
 local_model = LocalChatModel(config=LocalChatConfig())

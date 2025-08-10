@@ -1,6 +1,6 @@
 # tests/conftest.py - Pytest configuration
 """
-Pytest configuration for minichain tests.
+Pytest configuration for chain tests.
 """
 import pytest
 import asyncio

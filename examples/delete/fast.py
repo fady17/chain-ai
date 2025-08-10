@@ -3,8 +3,8 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.chat_models.base import LocalChatConfig
-from minichain.chat_models.local import LocalChatModel
+from chain.chat_models.base import LocalChatConfig
+from chain.chat_models.local import LocalChatModel
 
 # No special flags needed. This will use the fast non-streaming API.
 # config = OpenRouterConfig(model_name="mistralai/mistral-7b-instruct")

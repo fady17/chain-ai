@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../s
 
 import pytest
 from dotenv import load_dotenv
-from minichain.embeddings import AzureOpenAIEmbeddings
+from chain.embeddings import AzureOpenAIEmbeddings
 
 # Load environment variables from .env file for local testing
 load_dotenv()

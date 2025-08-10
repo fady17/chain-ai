@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.rag_runner import create_rag_from_directory
+from chain.rag_runner import create_rag_from_directory
 
 # Load all Python files from a directory
 rag = create_rag_from_directory(

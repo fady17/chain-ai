@@ -19,9 +19,9 @@ except ImportError:
     faiss = None  # Ensure the name 'faiss' exists even if import fails
     FAISS_INSTALLED = False
 
-from minichain.core.types import Document
-from minichain.vectors import FAISSVectorStore
-from minichain.embeddings.base import BaseEmbeddings
+from chain.core.types import Document
+from chain.vectors import FAISSVectorStore
+from chain.embeddings.base import BaseEmbeddings
 
 # --- Mocking Dependencies ---
 

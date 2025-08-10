@@ -1,6 +1,6 @@
 # tests/test_core_types.py
 """
-Unit tests for the Pydantic-based core data structures in `minichain.core.types`.
+Unit tests for the Pydantic-based core data structures in `chain.core.types`.
 These tests validate the behavior of the fundamental building blocks of the framework.
 """
 import sys
@@ -12,7 +12,7 @@ import json
 from pydantic import ValidationError
 
 # The components we are testing
-from minichain.core.types import Document, HumanMessage, SystemMessage, AIMessage
+from chain.core.types import Document, HumanMessage, SystemMessage, AIMessage
 
 def test_document_creation_with_all_fields():
     """

@@ -11,8 +11,8 @@ from dotenv import load_dotenv
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.chat_models import AzureOpenAIChatModel, AzureChatConfig
-from minichain.core.types import HumanMessage, SystemMessage
+from chain.chat_models import AzureOpenAIChatModel, AzureChatConfig
+from chain.core.types import HumanMessage, SystemMessage
 
 load_dotenv()
 

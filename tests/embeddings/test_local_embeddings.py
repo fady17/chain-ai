@@ -11,7 +11,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.embeddings import LocalEmbeddings
+from chain.embeddings import LocalEmbeddings
 
 # --- Test Fixtures and Configuration ---
 

@@ -10,7 +10,7 @@ the easiest way to start a conversation with a configured model.
 
 # # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.chat_models import LocalChatModel, LocalChatConfig, run_chat
+from chain.chat_models import LocalChatModel, LocalChatConfig, run_chat
 
 def main():
 

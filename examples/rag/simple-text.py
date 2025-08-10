@@ -2,11 +2,11 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.rag_runner import create_rag_from_texts
+from chain.rag_runner import create_rag_from_texts
 
 # Your knowledge base
 knowledge_texts = [
-    "The Minichain library is a lightweight LangChain alternative.",
+    "The chain library is a lightweight LangChain alternative.",
     "It was created by Fady Mohamed during his internship at IST Networks."
 ]
 

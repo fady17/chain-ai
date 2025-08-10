@@ -2,9 +2,9 @@ import sys
 import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
-from minichain.chat_models import LocalChatModel, LocalChatConfig
-# from minichain.text_splitters import RecursiveCharacterTextSplitter
-from minichain.text_splitters import RecursiveCharacterTextSplitter
+from chain.chat_models import LocalChatModel, LocalChatConfig
+# from chain.text_splitters import RecursiveCharacterTextSplitter
+from chain.text_splitters import RecursiveCharacterTextSplitter
 
 
 

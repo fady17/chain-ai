@@ -9,7 +9,7 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.chat_models import LocalChatModel, LocalChatConfig
+from chain.chat_models import LocalChatModel, LocalChatConfig
 
 # 1. Initialize the LocalChatModel
 # This connects to your LM Studio server running on the default port.

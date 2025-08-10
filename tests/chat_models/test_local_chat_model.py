@@ -9,8 +9,8 @@ import socket
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.chat_models import LocalChatModel, LocalChatConfig
-from minichain.core.types import HumanMessage, SystemMessage
+from chain.chat_models import LocalChatModel, LocalChatConfig
+from chain.core.types import HumanMessage, SystemMessage
 
 # --- Test Fixtures and Configuration ---
 

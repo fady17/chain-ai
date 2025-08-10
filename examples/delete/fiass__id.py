@@ -4,9 +4,9 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
 from uuid import uuid4
-from minichain.core.types import Document
-from minichain.vectors import FAISSVectorStore
-from minichain.embeddings import LocalEmbeddings
+from chain.core.types import Document
+from chain.vectors import FAISSVectorStore
+from chain.embeddings import LocalEmbeddings
 
 document_1 = Document(
     page_content="I had chocolate chip pancakes and scrambled eggs for breakfast this morning.",

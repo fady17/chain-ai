@@ -6,8 +6,8 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.prompts import PromptTemplate
-from minichain.chat_models import OpenRouterConfig, OpenRouterChatModel
+from chain.prompts import PromptTemplate
+from chain.chat_models import OpenRouterConfig, OpenRouterChatModel
 
 # --- Setup ---
 config = OpenRouterConfig(model="qwen/qwen3-235b-a22b:free")

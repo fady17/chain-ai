@@ -13,9 +13,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../s
 import time
 import pytest
 from dotenv import load_dotenv
-from minichain.core.types import Document
-from minichain.vectors import AzureAISearchVectorStore
-from minichain.embeddings.base import BaseEmbeddings
+from chain.core.types import Document
+from chain.vectors import AzureAISearchVectorStore
+from chain.embeddings.base import BaseEmbeddings
 import numpy as np
 
 # Load environment variables for local testing
@@ -46,7 +46,7 @@ requires_azure_creds = pytest.mark.skipif(
 @pytest.fixture(scope="module")
 def temp_index_name():
     """Pytest fixture to create a unique, temporary index name for the test run."""
-    return f"minichain-test-index-{int(time.time())}"
+    return f"chain-test-index-{int(time.time())}"
 
 # --- Test Functions ---
 

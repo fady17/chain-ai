@@ -12,24 +12,24 @@
 ## Installation
 
 ```bash
-pip install minichain-ai
+pip install chain-ai
 #For Local FAISS (CPU) Support:
-pip install minichain-ai[local]
+pip install chain-ai[local]
 #For NVIDIA GPU FAISS Support:
-pip install minichain-ai[gpu]
+pip install chain-ai[gpu]
 #For pdf parser(pymupdf)
-pip install minichain-ai[pdf]
+pip install chain-ai[pdf]
 #For Azure Support (Azure AI Search, Azure OpenAI):
-pip install minichain-ai[azure]
+pip install chain-ai[azure]
 #To install everything:
-pip install minichain-ai[all]
+pip install chain-ai[all]
 ```
 Quick Start
 Here is the simplest possible RAG pipeline with Mini-Chain:
 ```bash
-pip install minichain-ai[local]
+pip install chain-ai[local]
 
-from minichain.rag_runner import create_rag_from_files
+from chain.rag_runner import create_rag_from_files
 
 # Load knowledge from files
 rag = create_rag_from_files(
@@ -42,7 +42,7 @@ rag.run_chat()
 ```
 ### To Read the full directory
 ```bash
-from minichain.rag_runner import create_rag_from_directory
+from chain.rag_runner import create_rag_from_directory
 
 # Load all Python files from a directory
 rag = create_rag_from_directory(
@@ -53,44 +53,13 @@ rag = create_rag_from_directory(
 rag.run_chat()
 ```
 
-### Custom RAG Configuration
-```bash
-from minichain.rag_runner import RAGRunner, RAGConfig
 
-config = RAGConfig(
-    knowledge_texts=["Your knowledge here..."],
-    knowledge_files=["file1.txt", "file2.md"],
-    
-    # Chunking settings
-    chunk_size=1000,
-    chunk_overlap=200,
-    
-    # Retrieval settings
-    retrieval_k=4,
-    similarity_threshold=0.7,  # Only include high-similarity results
-    
-    # Chat settings
-    system_prompt="Custom system prompt...",
-    conversation_keywords=["custom", "keywords", "for", "conversation", "detection"],
-    
-    # Components (optional - uses defaults if not provided)
-    chat_model=None,  # Will use LocalChatModel
-    embeddings=None,  # Will use LocalEmbeddings
-    text_splitter=None,  # Will use RecursiveCharacterTextSplitter
-    vector_store=None,  # Will create FAISSVectorStore
-    
-    debug=True  # Enable debug output
-)
-
-rag = RAGRunner(config).setup()
-rag.run_chat()
-```
 ### Using Custom Components
 ```bash
-from minichain.rag_runner import RAGConfig, RAGRunner
-from minichain.chat_models import LocalChatModel, LocalChatConfig
-from minichain.embeddings import LocalEmbeddings
-from minichain.text_splitters import RecursiveCharacterTextSplitter
+from chain.rag_runner import RAGConfig, RAGRunner
+from chain.chat_models import LocalChatModel, LocalChatConfig
+from chain.embeddings import LocalEmbeddings
+from chain.text_splitters import RecursiveCharacterTextSplitter
 
 # Custom components
 custom_model = LocalChatModel(LocalChatConfig(temperature=0.7))
@@ -107,9 +76,13 @@ config = RAGConfig(
 rag = RAGRunner(config).setup()
 rag.run_chat()
 ```
-pip install minichain-ai[pdf]
+
 ```bash
-from minichain.rag_runner import create_smart_rag
+pip install chain-ai[pdf]
+```
+
+```bash
+from chain.rag_runner import create_smart_rag
 
 # Load PDF and create RAG
 rag = create_smart_rag(knowledge_files=["resume.pdf"])
@@ -120,4 +93,4 @@ print(response)
 ```
 
 for azure ai search
-pip install minichain-ai[azure]
+pip install chain-ai[azure]

@@ -2,13 +2,13 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
 
-from minichain.chat_models.base import OpenRouterConfig
-from minichain.chat_models import OpenRouterChatModel
+from chain.chat_models.base import OpenRouterConfig
+from chain.chat_models import OpenRouterChatModel
 
-from minichain.prompts import FewShotPromptTemplate
-from minichain.prompts.prompt_template import PromptTemplate
-from minichain.chat_models.base import LocalChatConfig
-from minichain.chat_models.local import LocalChatModel
+from chain.prompts import FewShotPromptTemplate
+from chain.prompts.prompt_template import PromptTemplate
+from chain.chat_models.base import LocalChatConfig
+from chain.chat_models.local import LocalChatModel
 
 prompt_template = PromptTemplate.from_template("Tell me a joke about {{topic}}")
 

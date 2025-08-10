@@ -6,8 +6,8 @@ from typing import List
 from typing_extensions import TypedDict
 from langgraph.graph import START, StateGraph
 
-from minichain.core.types import Document
-from minichain.rag_runner import create_rag_from_files
+from chain.core.types import Document
+from chain.rag_runner import create_rag_from_files
 
 # Define state for LangGraph
 class State(TypedDict):
