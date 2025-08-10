@@ -1,6 +1,6 @@
-# Mini-Chain
+# chain
 
-**Mini-Chain** is a micro-framework for building applications with Large Language Models, inspired by LangChain.
+**chain** is a micro-framework for building applications with Large Language Models, inspired by LangChain.
 
 ## Core Features
 
@@ -25,7 +25,7 @@ pip install chain-ai[azure]
 pip install chain-ai[all]
 ```
 Quick Start
-Here is the simplest possible RAG pipeline with Mini-Chain:
+Here is the simplest possible RAG pipeline with chain:
 ```bash
 pip install chain-ai[local]
 
