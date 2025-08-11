@@ -50,5 +50,5 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/fady17/minichain"
-Issues = "https://github.com/fady17/minichain/issues"
+Homepage = "https://github.com/fady17/chain-ai"
+Issues = "https://github.com/fady17/chain-ai/issues"
