@@ -47,6 +47,21 @@ class RAGRunner:
             chunk_size=config.chunk_size, chunk_overlap=config.chunk_overlap
         )
     
+    def save(self, folder_path: str):
+        """
+        Saves the vector store to a local folder if it's a FAISSVectorStore.
+        This encapsulates the logic for persistence.
+        """
+        # We check if the vector_store is the concrete FAISS type we can save.
+        if isinstance(self.vector_store, FAISSVectorStore):
+            if self.config.debug:
+                print(f"✅ Saving FAISS vector store to {folder_path}...")
+            self.vector_store.save_local(folder_path)
+        elif self.config.debug:
+            # If it's another type of vector store, we can't save it this way.
+            print(f"⚠️  Vector store of type {type(self.vector_store)} does not support save_local().")
+
+            
     def _get_splitter_for_file(self, file_path: Path) -> TextSplitter:
         """
         Returns the appropriate text splitter for a given file.

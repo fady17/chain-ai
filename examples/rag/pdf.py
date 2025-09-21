@@ -5,8 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../s
 from chain.rag_runner import create_smart_rag
 
 # Load PDF and create RAG
-rag = create_smart_rag(knowledge_files=["/Users/fady/Desktop/internship/langchain-clone/chainforge-ai/rsume0_2025.pdf"])
+rag = create_smart_rag(knowledge_files=["/Users/fady/Desktop/internship/langchain-clone/chainforge-ai/examples/rag/docs/ww.pdf"])
 
 # Query the PDF
-response = rag.query("What is this document about?")
-print(response)
+response = rag.run_chat()

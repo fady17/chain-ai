@@ -109,3 +109,5 @@ Thumbs.db
 .vscode
 examples/rag0
 tests/prompts
+examples/server/qdrant_storage
+examples/server/persistent_storage

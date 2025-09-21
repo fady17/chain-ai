@@ -1,4 +1,5 @@
 # ===== app/models.py =====
+import uuid
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from enum import Enum
@@ -29,3 +30,11 @@ class HealthResponse(BaseModel):
     status: str
     documents_loaded: int
     service_ready: bool
+
+
+# New, more detailed response for our production-grade upload endpoint
+class V2UploadResponse(BaseModel):
+    message: str = Field(..., example="File accepted and is being processed.") # type: ignore
+    file_id: uuid.UUID = Field(..., description="The unique internal ID for this document.")
+    original_filename: str
+    status: str = Field(default="pending_embedding", description="The current status of the file.")

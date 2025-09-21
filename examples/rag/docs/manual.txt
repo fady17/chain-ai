@@ -1,30 +1,33 @@
-"""
-About the Mini-Chain Framework**
 
-    Mini-Chain is a micro-framework for building applications with Large Language Models.
-    Its written by fady mohamed on his internship at ist networks as a required task by eng amin.
-    Its core principle is transparency and modularity. Unlike larger frameworks that
-    can feel like a "black box," Mini-Chain provides clean, single-purpose classes
-    for each stage of a RAG pipeline.
-    Core Components:
-    - Chat Models (`LocalChatModel`, `AzureOpenAIChatModel`):** These classes provide a
-      unified interface to interact with different LLM providers. The `invoke` method is
-      the primary way to get a response.
-    - Embeddings (`LocalEmbeddings`, `AzureOpenAIEmbeddings`):** These are used to convert
-      text into numerical vectors. They have `embed_documents` for lists of texts and
-      `embed_query` for single texts.
-    - Memory (`FAISSVectorStore`, `AzureAISearchVectorStore`):** These components store
-      the vectorized text chunks. `FAISSVectorStore` is a fast, local, in-memory option,
-      perfect for development. It supports saving and loading from disk.
-      `AzureAISearchVectorStore` is a scalable cloud solution for production.
-      The main method is `similarity_search`.
-    - Text Splitters (`TokenTextSplitter`, `RecursiveCharacterTextSplitter`):** These
-      are used to break large documents into smaller, manageable chunks before embedding.
-      `TokenTextSplitter` is recommended as it aligns with how models process tokens.
-    - Prompts (`PromptTemplate`, `FewShotPromptTemplate`, `ChatPromptTemplate`):**
-      Powered by a Jinja2 engine, these classes allow for dynamic and complex prompt
-      creation.
-    - Output Parsers (`PydanticOutputParser`): This powerful tool ensures that the
-      LLM's output is not just a string, but a validated, type-safe Pydantic object,
-      making the output reliable and easy to use in downstream logic.
-"""
+
+المادة 72
+
+يكون لقاضي التحقيق ما للمحكمة من الاختصاصات فيما يتعلق بنظام الجلسة. ويجوز الطعن في الأحكام التي يصدرها وفقاً لما هو مقرر للطعن في الأحكام الصادرة من القاضي الجزئي.
+
+ 
+
+المادة 73
+
+يستصحب قاضي التحقيق في جميع إجراءاته كاتباً من كتاب المحكمة يوقع معه المحاضر، وتحفظ هذه المحاضر مع الأوامر وباقي الأوراق في قلم كتاب المحكمة.
+
+ 
+
+المادة 74
+
+على الجمعية العامة للمحكمة أو من تفوضه الإشراف الإداري على قيام القضاة الذين يندبون لتحقيق وقائع معينة بأعمالهم بالسرعة اللازمة وعلى مراعاتهم للمواعيد المقررة في القانون.
+
+ 
+
+المادة 75
+
+تعتبر إجراءات التحقيق ذاتها والنتائج التي تسفر عنها من الأسرار. ويجب على قضاة التحقيق وأعضاء النيابة العامة ومساعديهم من كتاب وخبراء وغيرهم ممن يتصلون بالتحقيق أو يحضرونه بسبب وظيفتهم أو مهنتهم عدم إفشائها، ومن يخالف ذلك منهم يعاقب طبقاً للمادة 310 من قانون العقوبات.
+
+ 
+
+المادة 76
+
+لمن لحقه ضرر من الجريمة أن يدعي بحقوق مدنية أثناء التحقيق في الدعوى.
+
+ويفصل قاضي التحقيق نهائياً في قبوله بهذه الصفة في التحقيق.
+
+ 

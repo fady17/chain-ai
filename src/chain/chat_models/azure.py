@@ -27,6 +27,7 @@ class AzureOpenAIChatModel(BaseChatModel):
             config: An AzureChatConfig object with deployment details.
             **kwargs: Extra keyword arguments to pass to the API.
         """
+        
         super().__init__(config=config, **kwargs)
         self.config: AzureChatConfig = config  # For better type hinting
         
